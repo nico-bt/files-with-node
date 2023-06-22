@@ -1,0 +1,42 @@
+<%- include('./partials/header') %>
+
+      <h1 class="text-center mt-4">La Mar en Coche</h1>
+      <h2 class="text-center">Agregá tu producto</h2>
+
+      <div class="container-btns mt-5 d-flex justify-content-center gap-3">
+        <form
+          class="border p-4 bg-white"
+          action="/products"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              aria-describedby="emailHelp"
+              name="email"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="productName" class="form-label">Título del Producto</label>
+            <input type="text" class="form-control" id="productName" name="productName" />
+          </div>
+
+          <div class="mb-3">
+            <label for="image" class="form-label">Imagen</label>
+            <input type="file" class="form-control" id="image" name="image" />
+          </div>
+
+          <div class="mt-5 hstack justify-content-end gap-2">
+            <a href="/" class="btn btn-outline-danger w-50">Cancel</a>
+            <button type="submit" class="btn btn-success w-50">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
