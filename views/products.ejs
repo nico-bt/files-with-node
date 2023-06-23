@@ -12,6 +12,9 @@
               <div class="card-body">
                 <h5 class="card-title"><%= item.productName %></h5>
                 <p class="card-text"><%= item.email %></p>
+                <form action="/products/<%= item.imgFilename %>?_method=DELETE" method="POST">
+                  <button class="btn btn-outline-danger">Delete</button>
+                </form>
               </div>
             </div>
           </div>

@@ -1,6 +1,12 @@
+fs = require("fs")
 const express = require("express")
 const app = express()
 const port = 3000
+
+// Make DELETE method available in a form
+const methodOverride = require("method-override")
+// override with POST having ?_method=DELETE
+app.use(methodOverride("_method"))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -8,7 +14,7 @@ app.set("view engine", "ejs")
 app.use(express.static("public"))
 app.use(express.static("images"))
 
-const dummy_Database = [
+let dummy_Database = [
   {
     email: "hugo@mail.com",
     productName: "Robot",
@@ -79,12 +85,6 @@ app.get("/products/add", (req, res) => {
   res.render("add-product-form", { path: "/add", error: "" })
 })
 
-// GET single product
-//--------------------------------------------
-app.get("/products/:id", (req, res) => {
-  res.json({ msg: `Single prod id: ${req.params.id}` })
-})
-
 // POST create a product
 //--------------------------------------------
 app.post("/products", upload, (req, res) => {
@@ -110,6 +110,15 @@ app.post("/products", upload, (req, res) => {
   dummy_Database.push(newItem)
 
   res.render("products", { path: "/products", dummy_Database })
+})
+
+// DELETE a product and its respective file
+//--------------------------------------------
+app.delete("/products/:id", (req, res) => {
+  dummy_Database = dummy_Database.filter((item) => item.imgFilename !== req.params.id)
+  fs.unlink("./images/" + req.params.id, () => {})
+
+  res.redirect("/products")
 })
 
 app.listen(port, () => {
