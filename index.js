@@ -8,10 +8,11 @@ app.set("view engine", "ejs")
 app.use(express.static("public"))
 
 // Multer config for file uploading
-//-------------------------------------------------------------------------
+//**************************************************************************** */
 const multer = require("multer")
-// app.use(upload)
 
+// Where to store files and how to choose filenames
+//-----------------------------------------------------
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "images")
@@ -21,7 +22,32 @@ const storage = multer.diskStorage({
   },
 })
 
-const upload = multer({ storage }).single("image") //single archivo, name="image" en input
+// Filter by file extension
+//-----------------------------------------------------
+function fileFilter(req, file, cb) {
+  // The function should call `cb` with a boolean
+  // to indicate if the file should be accepted
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    // To accept the file pass `true`, like so:
+    cb(null, true)
+  } else {
+    // To reject this file pass `false`, like so:
+    req.file = "wrong extension"
+    cb(null, false)
+  }
+  // You can always pass an error if something goes wrong:
+  // cb(new Error("Error with Multer!"))
+}
+
+//single archivo, name="image" en input
+// Esta funcion es el middleware a poner en cada ruta o gral en app.use()
+const upload = multer({ storage, fileFilter }).single("image")
+
+//-------------------------------------------------------------------------
 
 app.get("/", (req, res) => {
   res.render("index", { path: "/" })
@@ -36,7 +62,7 @@ app.get("/products", (req, res) => {
 // Render Form to add product
 //--------------------------------------------
 app.get("/products/add", (req, res) => {
-  res.render("add-product-form", { path: "/products/add" })
+  res.render("add-product-form", { path: "/add", error: "" })
 })
 
 // GET single product
@@ -44,12 +70,30 @@ app.get("/products/add", (req, res) => {
 app.get("/products/:id", (req, res) => {
   res.json({ msg: `Single prod id: ${req.params.id}` })
 })
+
 // POST create a product
 //--------------------------------------------
 app.post("/products", upload, (req, res) => {
-  console.log(req.body)
-  console.log(req.file)
-  res.render("index")
+  const { email, productName } = req.body
+
+  // Multer parsea el file en req.file
+  // console.log(req.file)
+
+  if (req.file === "wrong extension") {
+    return res.render("add-product-form", {
+      path: "/add",
+      error: "Archivos válidos: .jpg .jpeg .png",
+    })
+  }
+
+  if (!email || !productName || !req.file) {
+    return res.render("add-product-form", {
+      path: "/add",
+      error: "Completar todos los campos",
+    })
+  }
+
+  res.render("index", { path: "/" })
 })
 
 app.listen(port, () => {
