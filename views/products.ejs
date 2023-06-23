@@ -3,8 +3,20 @@
       <h1 class="text-center mt-4">La mar en coche</h1>
       <h2 class="text-center">Regalos y chucherías</h2>
 
-      <div class="container-btns mt-5 d-flex justify-content-center gap-3">
-        <h2>Products</h2>
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3 mt-3">
+        
+        <% dummy_Database.forEach(item => { %>
+          <div class="col">
+            <div class="card text-center " >
+              <img src="<%= item.imgFilename %>" class="card-img-top" alt="<%= item.productName %>">
+              <div class="card-body">
+                <h5 class="card-title"><%= item.productName %></h5>
+                <p class="card-text"><%= item.email %></p>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+
       </div>
     </div>
   </body>

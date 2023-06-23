@@ -6,9 +6,23 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.set("view engine", "ejs")
 app.use(express.static("public"))
+app.use(express.static("images"))
 
-// Multer config for file uploading
-//**************************************************************************** */
+const dummy_Database = [
+  {
+    email: "hugo@mail.com",
+    productName: "Robot",
+    imgFilename: "image-1687482403440-BasicRobot.jpg",
+  },
+  {
+    email: "paco@mail.com",
+    productName: "Robotazo",
+    imgFilename: "image-1687483524104-SuperRobot.jpg",
+  },
+]
+
+// MULTER CONFIG FOR FILE UPLOADING
+//*****************************************************************************/
 const multer = require("multer")
 
 // Where to store files and how to choose filenames
@@ -47,16 +61,16 @@ function fileFilter(req, file, cb) {
 // Esta funcion es el middleware a poner en cada ruta o gral en app.use()
 const upload = multer({ storage, fileFilter }).single("image")
 
-//-------------------------------------------------------------------------
-
+// ROUTES
+//*****************************************************************************/
 app.get("/", (req, res) => {
   res.render("index", { path: "/" })
 })
 
 // GET all products
-//------------------------`Single prod id: ${req.params.id}`--------------------
+//--------------------------------------------
 app.get("/products", (req, res) => {
-  res.render("products", { path: "/products" })
+  res.render("products", { path: "/products", dummy_Database })
 })
 
 // Render Form to add product
@@ -92,8 +106,10 @@ app.post("/products", upload, (req, res) => {
       error: "Completar todos los campos",
     })
   }
+  const newItem = { email, productName, imgFilename: req.file.filename }
+  dummy_Database.push(newItem)
 
-  res.render("index", { path: "/" })
+  res.render("products", { path: "/products", dummy_Database })
 })
 
 app.listen(port, () => {
